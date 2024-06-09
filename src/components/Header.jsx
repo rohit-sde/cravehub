@@ -1,4 +1,5 @@
 import logoimg from "../assets/logo.jpg";
+import Button from "../ui/Button";
 
 function Header() {
     return (
@@ -8,7 +9,7 @@ function Header() {
                 <h1>Crave Hub</h1>
             </div>
             <nav>
-                <button>Cart (0)</button>
+                <Button textOnly>Cart (0)</Button>
             </nav>
         </header>
     );
