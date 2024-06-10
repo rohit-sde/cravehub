@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import MealItem from "./MealItem.jsx";
 import useHttp from "./http hook/useHttp.js";
+import Error from "./Error.jsx";
 
 const requestConfig = {};
 
@@ -12,11 +13,7 @@ export default function Meals() {
     } = useHttp("http://localhost:1001/meals", requestConfig, []);
 
     if (isLoading) {
-        return (
-            <p class className="center">
-                Fetching meals...
-            </p>
-        );
+        return <p className="center">Fetching meals...</p>;
     }
 
     if (error) {
