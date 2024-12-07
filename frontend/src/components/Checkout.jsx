@@ -30,7 +30,7 @@ export default function Checkout() {
 
   const cartTotal = cartCtx.items.reduce(
     (totalPrice, item) => totalPrice + item.quantity * item.price,
-    0
+    0,
   );
 
   function handleClose() {
@@ -55,7 +55,7 @@ export default function Checkout() {
           items: cartCtx.items,
           customer: customerData,
         },
-      })
+      }),
     );
   }
 
