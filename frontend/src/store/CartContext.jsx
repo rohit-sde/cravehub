@@ -1,5 +1,4 @@
-import { createContext, useContext, useReducer } from 'react';
-import UserProgressContext from './UserProgressContext';
+import { createContext, useReducer } from 'react';
 
 const CartContext = createContext({
   items: [],

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { CONFIG } from '../../config';
 
 async function sendHttpRequest(url, config) {
   const response = await fetch(url, config);
@@ -21,7 +22,7 @@ export default function useHttp(url, config, initialData) {
     async function sendRequest(data) {
       setIsLoading(true);
       try {
-        const resData = await sendHttpRequest(url, {
+        const resData = await sendHttpRequest(`${CONFIG.apiUrl}/api/${url?.replace(/^\//, '')}`, {
           ...config,
           body: data,
         });
