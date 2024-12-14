@@ -67,6 +67,7 @@ jobs:
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           ssh -i ./.tmp/.ssh/github-actions -o StrictHostKeyChecking=no ${{ env.VPS_USER }}@${{ env.VPS_IP }} << 'EOF'
+            clear
             aws ecr get-login-password --region ${{ secrets.AWS_ECR_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_HOST_URL }}
 
             docker pull ${{ env.ECR_REPOSITORY_URL }}:latest
