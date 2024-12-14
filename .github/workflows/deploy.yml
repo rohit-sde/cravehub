@@ -37,55 +37,43 @@ jobs:
       - name: Setup FE
         run: cp -r frontend/build/* backend/public
 
-      - name: Setup FE1
+      - name: Build Docker image
+        run: docker build -f backend/Dockerfile -t ${{ env.ECR_REPOSITORY_URL }}:latest .
+
+      - name: Push Docker image to AWS ECR
+        run: docker push ${{ env.ECR_REPOSITORY_URL }}:latest
+
+      # SSH into the VPS, Pull the Image, and Run the Container
+      - name: Set up SSH keys for VPS
         run: |
-          ls -al backend
-      - name: Setup FE2
+          mkdir -p ./.tmp/.ssh
+          echo "${{ secrets.VPS_USER_SSH_KEY }}" > ./.tmp/.ssh/github-actions
+          chmod 600 ./.tmp/.ssh/github-actions
+
+      - name: SSH into VPS and Deploy Docker Container
+        env:
+          VPS_IP: ${{ secrets.VPS_IP_ADDRESS }}
+          VPS_USER: ${{ secrets.VPS_USER }}
         run: |
-          ls -al backend/public
-    #   - name: Login to Amazon ECR
-    #     id: login-ecr
-    #     uses: aws-actions/amazon-ecr-login@v2
+          ssh -i ./.tmp/.ssh/github-actions -o StrictHostKeyChecking=no ${{ env.VPS_USER }}@${{ env.VPS_IP }} << 'EOF'
+            aws ecr get-login-password --region ${{ vars.AWS_ECR_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_HOST_URL }}
 
-    #   - name: Build Docker image
-    #     run: |
-    #       node node/index.mjs
-    #       docker build -f Dockerfile -t ${{ env.ECR_REPOSITORY_URL }}:latest .
+            docker pull ${{ env.ECR_REPOSITORY_URL }}:latest
 
-    #   - name: Push Docker image to AWS ECR
-    #     run: docker push ${{ env.ECR_REPOSITORY_URL }}:latest
+            docker stop ${{ secrets.APP_CONTAINER_NAME }} 2> /dev/null
+            docker rm ${{ secrets.APP_CONTAINER_NAME }} 2> /dev/null
 
-    #   # New Steps to SSH into the VPS, Pull the Image, and Run the Container
-    #   - name: Set up SSH keys for VPS
-    #     run: |
-    #       mkdir -p ./.tmp/.ssh
-    #       echo "${{ secrets.VPS_USER_SSH_KEY }}" > ./.tmp/.ssh/github-actions
-    #       chmod 600 ./.tmp/.ssh/github-actions
+            docker run -d --name ${{ secrets.APP_CONTAINER_NAME }} -p ${{ secrets.APP_PORT_MAPPING }} --network vps ${{ env.ECR_REPOSITORY_URL }}:latest
+          EOF
 
-    #   - name: SSH into VPS and Deploy Docker Container
-    #     env:
-    #       VPS_IP: ${{ vars.VPS_IP_ADDRESS }}
-    #       VPS_USER: ${{ vars.VPS_USERNAME }}
-    #     run: |
-    #       ssh -i ./.tmp/.ssh/github-actions -o StrictHostKeyChecking=no ${{ env.VPS_USER }}@${{ env.VPS_IP }} << 'EOF'
-    #         aws ecr get-login-password --region ${{ vars.AWS_ECR_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_HOST_URL }}
+      # Remove local dangling Docker images
+      - name: Remove dangling Docker images locally
+        run: |
+          docker image prune -f
 
-    #         docker pull ${{ env.ECR_REPOSITORY_URL }}:latest
-
-    #         docker stop ${{ secrets.APP_CONTAINER_NAME }} 2> /dev/null
-    #         docker rm ${{ secrets.APP_CONTAINER_NAME }} 2> /dev/null
-
-    #         docker run -d --name ${{ secrets.APP_CONTAINER_NAME }} -p ${{ secrets.APP_PORT_MAPPING }} --network vps ${{ env.ECR_REPOSITORY_URL }}:latest
-    #       EOF
-
-    #   # Remove local dangling Docker images
-    #   - name: Remove dangling Docker images locally
-    #     run: |
-    #       docker image prune -f
-
-    #   # Remove dangling Docker images from AWS ECR
-    #   - name: Remove dangling Docker images from ECR
-    #     run: |
-    #       for digest in $(aws ecr describe-images --repository-name ${{ vars.AWS_ECR_REPOSITORY }} --query 'imageDetails[?imageTags==`null`].imageDigest' --output text); do
-    #         aws ecr batch-delete-image --repository-name ${{ vars.AWS_ECR_REPOSITORY }} --image-ids imageDigest=$digest
-    #       done
+      # Remove dangling Docker images from AWS ECR
+      - name: Remove dangling Docker images from ECR
+        run: |
+          for digest in $(aws ecr describe-images --repository-name ${{ vars.AWS_ECR_REPOSITORY }} --query 'imageDetails[?imageTags==`null`].imageDigest' --output text); do
+            aws ecr batch-delete-image --repository-name ${{ vars.AWS_ECR_REPOSITORY }} --image-ids imageDigest=$digest
+          done
