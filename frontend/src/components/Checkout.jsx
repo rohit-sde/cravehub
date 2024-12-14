@@ -2,11 +2,12 @@ import { useContext } from "react";
 
 import Modal from "./UI/Modals.jsx";
 import CartContext from "../store/CartContext.jsx";
-import currencyFormatter from "../util/formatting.js";
+import currencyFormatter from "../Util/formatting.js";
 import Input from "./UI/Input.jsx";
 import Button from "./UI/Button.jsx";
 import UserProgressContext from "../store/UserProgressContext.jsx";
 import useHttp from "./http hook/useHttp.js";
+import Error from "./Error.jsx";
 
 const requestConfig = {
     method: "POST",
@@ -63,7 +64,7 @@ export default function Checkout() {
             <Button type="button" textOnly onClick={handleClose}>
                 Close
             </Button>
-            <Button>Submit Oder</Button>
+            <Button>Submit Order</Button>
         </>
     );
 
@@ -72,20 +73,22 @@ export default function Checkout() {
     }
 
     if (data && !error) {
-        <Modal
-            open={userProgressCtx.progress === "checkout"}
-            onClose={handleFinish}
-        >
-            <h2>Success</h2>
-            <p>Your order was submitted successfully.</p>{" "}
-            <p>
-                We will get back to you with more details via email within the
-                next few minutes.
-            </p>
-            <p className="modal-actions">
-                <Button onClick={handleFinish}>Okay</Button>
-            </p>
-        </Modal>;
+        return (
+            <Modal
+                open={userProgressCtx.progress === "checkout"}
+                onClose={handleFinish}
+            >
+                <h2>Success!</h2>
+                <p>Your order was submitted successfully.</p>
+                <p>
+                    We will get back to you with more details via email within
+                    the next few minutes.
+                </p>
+                <p className="modal-actions">
+                    <Button onClick={handleFinish}>Okay</Button>
+                </p>
+            </Modal>
+        );
     }
 
     return (
