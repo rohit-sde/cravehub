@@ -1,5 +1,5 @@
-import { createContext, useContext, useReducer } from "react";
-import UserProgressContext from "./UserProgressContext";
+import { createContext, useContext, useReducer } from 'react';
+import UserProgressContext from './UserProgressContext';
 
 const CartContext = createContext({
   items: [],
@@ -9,10 +9,8 @@ const CartContext = createContext({
 });
 
 function cartReducer(state, action) {
-  if (action.type === "ADD_ITEM") {
-    const existingCartItemIndex = state.items.findIndex(
-      (item) => item.id === action.item.id
-    );
+  if (action.type === 'ADD_ITEM') {
+    const existingCartItemIndex = state.items.findIndex((item) => item.id === action.item.id);
 
     const updatedItems = [...state.items];
 
@@ -30,10 +28,8 @@ function cartReducer(state, action) {
     return { ...state, items: updatedItems };
   }
 
-  if (action.type === "REMOVE_ITEM") {
-    const existingCartItemIndex = state.items.findIndex(
-      (item) => item.id === action.id
-    );
+  if (action.type === 'REMOVE_ITEM') {
+    const existingCartItemIndex = state.items.findIndex((item) => item.id === action.id);
     const existingCartItem = state.items[existingCartItemIndex];
 
     const updatedItems = [...state.items];
@@ -51,7 +47,7 @@ function cartReducer(state, action) {
     return { ...state, items: updatedItems };
   }
 
-  if (action.type === "CLEAR_CART") {
+  if (action.type === 'CLEAR_CART') {
     return { ...state, items: [] };
   }
 
@@ -62,15 +58,15 @@ export function CartContextProvider({ children }) {
   const [cart, dispatchCartAction] = useReducer(cartReducer, { items: [] });
 
   function addItem(item) {
-    dispatchCartAction({ type: "ADD_ITEM", item });
+    dispatchCartAction({ type: 'ADD_ITEM', item });
   }
 
   function removeItem(id) {
-    dispatchCartAction({ type: "REMOVE_ITEM", id });
+    dispatchCartAction({ type: 'REMOVE_ITEM', id });
   }
 
   function clearCart() {
-    dispatchCartAction({ type: "CLEAR_CART" });
+    dispatchCartAction({ type: 'CLEAR_CART' });
   }
 
   const cartContext = {
@@ -80,9 +76,7 @@ export function CartContextProvider({ children }) {
     clearCart,
   };
 
-  return (
-    <CartContext.Provider value={cartContext}>{children}</CartContext.Provider>
-  );
+  return <CartContext.Provider value={cartContext}>{children}</CartContext.Provider>;
 }
 
 export default CartContext;

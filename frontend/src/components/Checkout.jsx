@@ -1,18 +1,18 @@
-import { useContext } from "react";
+import { useContext } from 'react';
 
-import Modal from "./UI/Modals.jsx";
-import CartContext from "../store/CartContext.jsx";
-import currencyFormatter from "../util/formatting.js";
-import Input from "./UI/Input.jsx";
-import Button from "./UI/Button.jsx";
-import UserProgressContext from "../store/UserProgressContext.jsx";
-import useHttp from "./http hook/useHttp.js";
-import Error from "./Error.jsx";
+import Modal from './UI/Modals.jsx';
+import CartContext from '../store/CartContext.jsx';
+import currencyFormatter from '../util/formatting.js';
+import Input from './UI/Input.jsx';
+import Button from './UI/Button.jsx';
+import UserProgressContext from '../store/UserProgressContext.jsx';
+import useHttp from './http hook/useHttp.js';
+import Error from './Error.jsx';
 
 const requestConfig = {
-  method: "POST",
+  method: 'POST',
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 };
 
@@ -26,12 +26,9 @@ export default function Checkout() {
     error,
     sendRequest,
     clearData,
-  } = useHttp("http://localhost:1001/orders", requestConfig);
+  } = useHttp('http://localhost:1001/orders', requestConfig);
 
-  const cartTotal = cartCtx.items.reduce(
-    (totalPrice, item) => totalPrice + item.quantity * item.price,
-    0,
-  );
+  const cartTotal = cartCtx.items.reduce((totalPrice, item) => totalPrice + item.quantity * item.price, 0);
 
   function handleClose() {
     userProgressCtx.hideCheckout();
@@ -55,7 +52,7 @@ export default function Checkout() {
           items: cartCtx.items,
           customer: customerData,
         },
-      }),
+      })
     );
   }
 
@@ -74,16 +71,10 @@ export default function Checkout() {
 
   if (data && !error) {
     return (
-      <Modal
-        open={userProgressCtx.progress === "checkout"}
-        onClose={handleFinish}
-      >
+      <Modal open={userProgressCtx.progress === 'checkout'} onClose={handleFinish}>
         <h2>Success!</h2>
         <p>Your order was submitted successfully.</p>
-        <p>
-          We will get back to you with more details via email within the next
-          few minutes.
-        </p>
+        <p>We will get back to you with more details via email within the next few minutes.</p>
         <p className="modal-actions">
           <Button onClick={handleFinish}>Okay</Button>
         </p>
@@ -92,7 +83,7 @@ export default function Checkout() {
   }
 
   return (
-    <Modal open={userProgressCtx.progress === "checkout"} onClose={handleClose}>
+    <Modal open={userProgressCtx.progress === 'checkout'} onClose={handleClose}>
       <form onSubmit={handleSubmit}>
         <h2>Checkout</h2>
         <p>Total Amount: {currencyFormatter.format(cartTotal)}</p>
