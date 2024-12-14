@@ -40,9 +40,6 @@ jobs:
       - name: Build Docker image
         run: docker build -f backend/Dockerfile -t ${{ env.ECR_REPOSITORY_URL }}:latest backend
 
-      - name: Push Docker image to AWS ECR
-        run: docker push ${{ env.ECR_REPOSITORY_URL }}:latest
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -53,6 +50,9 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Push Docker image to AWS ECR
+        run: docker push ${{ env.ECR_REPOSITORY_URL }}:latest
 
       # SSH into the VPS, Pull the Image, and Run the Container
       - name: Set up SSH keys for VPS
