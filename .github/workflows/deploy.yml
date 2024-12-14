@@ -29,7 +29,7 @@ jobs:
         run: cd frontend && npm i
 
       - name: FE - Build
-        run: npm run build:prod
+        run: cd frontend && npm run build:prod
 
       - name: BE - Install Deps
         run: cd backend && npm i
