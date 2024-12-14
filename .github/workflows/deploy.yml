@@ -35,7 +35,7 @@ jobs:
         run: cd backend && npm i
 
       - name: Setup FE
-        run: cp -r frontend/build/ backend/public
+        run: cp -r frontend/build/* backend/public
 
       - name: Setup FE1
         run: |
