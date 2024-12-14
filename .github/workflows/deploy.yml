@@ -26,7 +26,7 @@ jobs:
           node-version: 20
 
       - name: FE - Install Deps
-        run: cd frondend && npm i
+        run: cd frontend && npm i
 
       - name: FE - Build
         run: npm run build:prod
