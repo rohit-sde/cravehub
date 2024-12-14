@@ -26,17 +26,23 @@ jobs:
           node-version: 20
 
       - name: FE - Install Deps
-        run: |
-          cd frondend && npm i
-          ls -al
+        run: cd frondend && npm i
 
       - name: FE - Build
-        run: |
-          ls -al
+        run: npm run build:prod
 
       - name: BE - Install Deps
         run: cd backend && npm i
 
+      - name: Setup FE
+        run: cp frontend/build/ backend/public
+
+      - name: Setup FE1
+        run: |
+          ls -al backend
+      - name: Setup FE2
+        run: |
+          ls -al backend/public
     #   - name: Login to Amazon ECR
     #     id: login-ecr
     #     uses: aws-actions/amazon-ecr-login@v2
