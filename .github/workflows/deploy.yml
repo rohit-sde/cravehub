@@ -38,7 +38,7 @@ jobs:
         run: cp -r frontend/build/* backend/public
 
       - name: Build Docker image
-        run: docker build -f backend/Dockerfile -t ${{ env.ECR_REPOSITORY_URL }}:latest .
+        run: docker build -f Dockerfile -t ${{ env.ECR_REPOSITORY_URL }}:latest backend
 
       - name: Push Docker image to AWS ECR
         run: docker push ${{ env.ECR_REPOSITORY_URL }}:latest
