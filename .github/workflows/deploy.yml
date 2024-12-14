@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 env:
-  ECR_HOST_URL: ${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ vars.AWS_ECR_REGION }}.amazonaws.com
-  ECR_REPOSITORY_URL: ${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ vars.AWS_ECR_REGION }}.amazonaws.com/${{ vars.AWS_ECR_REPOSITORY }}
+  ECR_HOST_URL: ${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ secrets.AWS_ECR_REGION }}.amazonaws.com
+  ECR_REPOSITORY_URL: ${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ secrets.AWS_ECR_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY }}
 
 jobs:
   build-and-deploy:
@@ -56,7 +56,7 @@ jobs:
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           ssh -i ./.tmp/.ssh/github-actions -o StrictHostKeyChecking=no ${{ env.VPS_USER }}@${{ env.VPS_IP }} << 'EOF'
-            aws ecr get-login-password --region ${{ vars.AWS_ECR_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_HOST_URL }}
+            aws ecr get-login-password --region ${{ secrets.AWS_ECR_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_HOST_URL }}
 
             docker pull ${{ env.ECR_REPOSITORY_URL }}:latest
 
@@ -74,6 +74,6 @@ jobs:
       # Remove dangling Docker images from AWS ECR
       - name: Remove dangling Docker images from ECR
         run: |
-          for digest in $(aws ecr describe-images --repository-name ${{ vars.AWS_ECR_REPOSITORY }} --query 'imageDetails[?imageTags==`null`].imageDigest' --output text); do
-            aws ecr batch-delete-image --repository-name ${{ vars.AWS_ECR_REPOSITORY }} --image-ids imageDigest=$digest
+          for digest in $(aws ecr describe-images --repository-name ${{ secrets.AWS_ECR_REPOSITORY }} --query 'imageDetails[?imageTags==`null`].imageDigest' --output text); do
+            aws ecr batch-delete-image --repository-name ${{ secrets.AWS_ECR_REPOSITORY }} --image-ids imageDigest=$digest
           done
