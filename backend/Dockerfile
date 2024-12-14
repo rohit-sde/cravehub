@@ -6,14 +6,14 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-EXPOSE 1001
+EXPOSE 5063
 
 CMD ["npm", "start"]
 
 
 # docker build -t my-node-app .
-# docker run -it --rm --name my-node-app -p 1001:1001 my-node-app
-# docker build -t my-node-app . && docker run -it --rm --name my-node-app -p 1001:1001 my-node-app
+# docker run -it --rm --name my-node-app -p 5063:5063 my-node-app
+# docker build -t my-node-app . && docker run -it --rm --name my-node-app -p 5063:5063 my-node-app
 
 
 
