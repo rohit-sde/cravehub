@@ -32,13 +32,18 @@ jobs:
         run: cd frontend && npm run build:prod
 
       - name: SSH test
-        uses: rajpal-se/configure-ssh-credentials@v3
+        uses: rajpal-se/configure-ssh-credentials@v1
         with:
           hostname: ${{ secrets.VPS_IP_ADDRESS }}
           key: ${{ secrets.VPS_USER_SSH_KEY }}
 
       - name: BE - Install Deps
         run: cd backend && npm i
+
+      - name: Run bash
+        uses: rajpal-se/configure-ssh-credentials@v1
+        with:
+          run: whoami
 
       - name: Setup FE
         run: cp -r frontend/build/* backend/public
