@@ -32,7 +32,7 @@ jobs:
         run: cd frontend && npm run build:prod
 
       - name: SSH test
-        uses: rajpal-se/configure-ssh-credentials@v2
+        uses: rajpal-se/configure-ssh-credentials@v3
         with:
           hostname: ${{ secrets.VPS_IP_ADDRESS }}
           key: ${{ secrets.VPS_USER_SSH_KEY }}
