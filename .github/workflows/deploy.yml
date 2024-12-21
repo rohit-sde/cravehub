@@ -92,13 +92,16 @@ jobs:
       # Remove dangling Docker images
       - name: Remove dangling Docker images
         uses: rajpal-se/cleanup-docker@v1
+        with:
+          aws-ecr-repository: ${{ secrets.AWS_ECR_REPOSITORY }}
+          aws-ecr-region: ${{ secrets.AWS_ECR_REGION }}
 
       # - name: Remove dangling Docker images locally
       #   run: |
       #     docker image prune -f
 
       # # Remove dangling Docker images from AWS ECR
-      # - name: Remove dangling Docker images from ECR
+      # - name: Remove dangling Docker images from ECRt
       #   run: |
       #     for digest in $(aws ecr describe-images --repository-name ${{ secrets.AWS_ECR_REPOSITORY }} --query 'imageDetails[?imageTags==`null`].imageDigest' --output text); do
       #       aws ecr batch-delete-image --repository-name ${{ secrets.AWS_ECR_REPOSITORY }} --image-ids imageDigest=$digest
