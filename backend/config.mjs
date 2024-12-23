@@ -1,4 +1,4 @@
 export const CONFIG = {
-  port: 1001,
+  port: 5063,
   host: '0.0.0.0',
 };
