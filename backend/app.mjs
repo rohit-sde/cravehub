@@ -2,6 +2,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import { CONFIG } from './config.mjs';
 import { router } from './routes.mjs';
+import path from 'path';
 
 const app = express();
 
